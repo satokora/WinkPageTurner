@@ -195,10 +195,10 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         if(isopened==true)
         {
 
-
             Log.e(TAG, "+++++about to close++++++");
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.detach(this).attach(this).commit();
+
 
             ProgressDialog progress = ProgressDialog.show(getActivity(), "First set up", "Setting up example file ...", true);
             try {

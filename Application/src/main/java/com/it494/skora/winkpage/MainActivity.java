@@ -214,6 +214,8 @@ public class MainActivity extends Activity {
 
         if(mWinkService!=null && mWinkService.getState()==BluetoothWinkService.STATE_CONNECTED)
         {
+
+            pdfFragment.setDeviceNameToScreen(mConnectedDeviceName, true);
             notifySettingsChanged();
         }
 
