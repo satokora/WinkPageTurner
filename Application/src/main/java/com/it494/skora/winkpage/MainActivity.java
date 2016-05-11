@@ -209,12 +209,14 @@ public class MainActivity extends Activity {
     public synchronized void onResume() {
         super.onResume();
         if(D) Log.e(TAG, "+ ON RESUME +");
+        if(mWinkService==null) Log.e(TAG, "+ service is null +");
 
 
         if(mWinkService!=null && mWinkService.getState()==BluetoothWinkService.STATE_CONNECTED)
         {
             notifySettingsChanged();
         }
+
 
     }
     public void setupBluetooth() {
@@ -374,6 +376,8 @@ public class MainActivity extends Activity {
                     sendMessage("END");
                     mWinkService.stop();
                     myBt.disable();
+                    mWinkService = null;
+                    myBt = null;
                 }
 
                 pdfFragment.setDeviceNameToScreen("",false);

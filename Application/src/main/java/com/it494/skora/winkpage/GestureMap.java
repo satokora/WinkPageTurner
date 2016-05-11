@@ -11,12 +11,7 @@ public class GestureMap {
     public static String SHAKE_LEFT ="SHAKELEFT";
     public static String SHAKE_RIGHT ="SHAKERIGHT";
     public static String LOOKUP ="LOOKUP";
-//    public static int DOUBLE_WINK =1;
-//    public static int DOUBLE_BLINK =2;
-//    public static int HEAD_SWING_LEFT =3;
-//    public static int HEAD_SWING_RIGHT =4;
-//    public static int LOOKUP =5;
-//    public static int LOOKDOWN =6;
+
 
     public static int DOUBLE_NOD =8;
     public static int NONE =9;

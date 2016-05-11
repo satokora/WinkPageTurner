@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -108,6 +109,10 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
 
     public boolean isDismissedFromSetting;
 
+    private int curPage = -1;
+
+    public static boolean isopened;
+
     public PdfRendererBasicFragment() {
     }
 
@@ -122,6 +127,8 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        isopened=false;
+
         isDismissedFromSetting=false;
         // Retain view references.
         mImageView = (ImageView) view.findViewById(R.id.image);
@@ -130,7 +137,6 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         mButtonTop = (Button) view.findViewById(R.id.top);
         mButtonLast = (Button) view.findViewById(R.id.last);
         viewFlipper = (ViewFlipper) view.findViewById(R.id.viewflipper);
-        //mProgressView = getActivity().findViewById(R.id.setup_progress);
 
         // Bind events.
         mButtonPrevious.setOnClickListener(this);
@@ -186,29 +192,36 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
+        if(isopened==true)
+        {
 
-//        Log.e(TAG, "+ ON resume +");
-//        if(isDismissedFromSetting==true)
-//        {
-//            goToPrevPage();
-//            goToNextPage();
-//        }
-//
-//        isDismissedFromSetting = !isDismissedFromSetting;
-//        try {
-//            Log.e(TAG, "+++++ON RESUME PDF++++++");
-//
-////            if(mPdfRenderer. !=null)
-////            {
-////                mPdfRenderer.close();
-////            }
-////
-////            openRenderer(getActivity());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getActivity(), "Error! " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//            getActivity().finish();
-//        }
+
+            Log.e(TAG, "+++++about to close++++++");
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+
+            ProgressDialog progress = ProgressDialog.show(getActivity(), "First set up", "Setting up example file ...", true);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            File file = new File(getActivity().getExternalMediaDirs()[0].getPath() + "/test.pdf");
+
+            //dialog.dismiss();
+            //Log.e(TAG, "async dismissed");
+            try {
+                mPdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            progress.dismiss();
+
+            isopened=false;
+
+        }
+        Log.e(TAG, "+++++ON RESUME PDF++++++");
+
     }
 
 
@@ -219,6 +232,7 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         super.onAttach(activity);
         try {
             Log.e(TAG, activity.getLocalClassName());
+
             openRenderer(activity);
         } catch (IOException e) {
             e.printStackTrace();
@@ -290,16 +304,6 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         }
         @Override
         protected void onPostExecute(Void result) {
-//            File file = new File(getActivity().getExternalMediaDirs()[0].getPath() + "/test.pdf");
-//            dialog.dismiss();
-//            Log.e(TAG, "async dismissed");
-//            try {
-//                mPdfRenderer = new PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-
-
 
         }
     }
@@ -310,11 +314,9 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
 
             fis = is.open(fileFrom);
             FileOutputStream fos;
-//            if (!APP_FILE_PATH.exists()) {
-//                APP_FILE_PATH.mkdirs();
-//            }
+
             fos = new FileOutputStream(new File(getActivity().getExternalMediaDirs()[0].getPath(), fileFrom));
-            //fos = new FileOutputStream(new File("sample.pdf"));
+
             byte[] b = new byte[8];
             int i;
             while ((i = fis.read(b)) != -1) {
@@ -362,8 +364,13 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
             mCurrentPage.close();
         }
 
-        mFileDescriptor.close();
-        mPdfRenderer.close();
+        if(mPdfRenderer!=null && mFileDescriptor!=null)
+        {
+            mFileDescriptor.close();
+            mPdfRenderer.close();
+        }
+
+
     }
 
     /**
@@ -382,6 +389,7 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
                 e.printStackTrace();
             }
             File file = new File(getActivity().getExternalMediaDirs()[0].getPath() + "/test.pdf");
+
             //dialog.dismiss();
             //Log.e(TAG, "async dismissed");
             try {
@@ -414,6 +422,8 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         mCurrentPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
         // We are ready to show the Bitmap to user.
         mImageView.setImageBitmap(bitmap);
+        mImageView.invalidate();
+        curPage=index;
         updateUi();
     }
 

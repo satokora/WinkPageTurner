@@ -30,6 +30,8 @@ import com.google.android.gms.drive.DriveFile.DownloadProgressListener;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.common.io.FileBackedOutputStream;
+import com.it494.skora.winkpage.MainActivity;
+import com.it494.skora.winkpage.PdfRendererBasicFragment;
 import com.it494.skora.winkpage.R;
 
 import java.io.File;
@@ -80,7 +82,7 @@ public class RetrieveContentsActivity extends BaseDemoActivity {
             return;
         }
 
-        // Let the user pick an mp4 or a jpeg file if there are
+        // Let the user pick a pdf file if there are
         // no files selected by the user.
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
@@ -119,6 +121,7 @@ public class RetrieveContentsActivity extends BaseDemoActivity {
         DriveFile driveFile =  mSelectedFileDriveId.asDriveFile();
         driveFile.open(getGoogleApiClient(), DriveFile.MODE_READ_ONLY, listener)
             .setResultCallback(driveContentsCallback);
+        PdfRendererBasicFragment.isopened=true;
         mSelectedFileDriveId = null;
     }
 

@@ -27,7 +27,7 @@
     <PreferenceScreen
         android:key="drive_document"
         android:title="@string/pref_title_upload_doc"
-        android:summary="none">
+        >
 
         <intent android:action="UploadDoc" />
 
@@ -36,7 +36,7 @@
     <PreferenceScreen
         android:key="drive_document"
         android:title="@string/pref_title_selected_doc"
-        android:summary="none">
+        >
 
         <intent android:action="DriveStart" />
 
